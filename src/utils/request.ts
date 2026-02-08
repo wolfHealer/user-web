@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios from 'axios'
+import type { AxiosInstance, AxiosResponse } from 'axios'
 import { showToast } from 'vant'
-import router from '@/router'
+import router from '../router' // 确保路径别名已正确配置
 
 /**
  * 后端返回的统一结构（与 Go 对齐）
@@ -24,7 +25,7 @@ const service: AxiosInstance = axios.create({
  * 自动携带 token
  */
 service.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config) => {
     const token = localStorage.getItem('token')
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`

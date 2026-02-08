@@ -10,7 +10,13 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "verbatimModuleSyntax": true // 如果存在此配置，则需遵守规则
+
   },
+   "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

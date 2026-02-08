@@ -7,6 +7,7 @@ const routes = [
 
   // 首页
   { path: '/home', component: () => import('../views/main/Home.vue') },
+  { path: '/messages', component: () => import('../views/main/Messages.vue') },
 
   // 登录页
   { path: '/login', component: () => import('../views/user/Login.vue') },

@@ -1,7 +1,19 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- 顶部操作栏 -->
+    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full flex items-center">
+      <!-- 返回按钮 -->
+      <van-icon
+        name="arrow-left"
+        size="24"
+        class="cursor-pointer mr-4"
+        @click="goBack"
+      />
+      <h1 class="text-lg font-bold">知识库</h1>
+    </header>
+
     <!-- 顶部搜索栏 -->
-    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full">
+    <section class="p-4">
       <van-search
         v-model="searchKeyword"
         placeholder="搜索病种、症状、药物..."
@@ -20,7 +32,7 @@
           {{ item }}
         </div>
       </div>
-    </header>
+    </section>
 
     <!-- 病种分类 -->
     <section class="p-4">
@@ -104,6 +116,11 @@ const goToCategory = (categoryId: number) => {
 const goToDiseaseDetail = (diseaseId: number) => {
   router.push(`/disease/${diseaseId}`)
 }
+
+// 返回上一级页面
+const goBack = () => {
+  router.back()
+}
 </script>
 
 <style scoped>
@@ -115,5 +132,8 @@ const goToDiseaseDetail = (diseaseId: number) => {
 }
 .shadow-sm {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.cursor-pointer:hover {
+  opacity: 0.8;
 }
 </style>

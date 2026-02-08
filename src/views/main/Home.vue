@@ -17,7 +17,6 @@
           class="cursor-pointer"
           @click="goToMessages"
         />
-        <!-- 未读消息红点 -->
         <div
           v-if="unreadCount > 0"
           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
@@ -42,27 +41,37 @@
 
     <!-- 最新动态 -->
     <section class="flex-1 overflow-y-auto p-4">
-      <div
-        v-for="(post, index) in posts"
-        :key="index"
-        class="bg-white rounded-lg shadow-sm mb-4 p-4"
+      <van-pull-refresh
+        v-model="refreshing"
+        @refresh="onRefresh"
       >
-        <div class="flex items-start">
-          <img
-            :src="post.avatar"
-            alt="Avatar"
-            class="w-10 h-10 rounded-full mr-3"
-            loading="lazy"
-          />
-          <div class="flex-1">
-            <div class="font-semibold text-sm">{{ post.author }}</div>
-            <div class="text-xs text-gray-500 mt-1">{{ post.time }}</div>
-            <div class="mt-2 text-gray-700 text-sm">{{ post.content }}</div>
+        <van-list
+          v-model:loading="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoadMore"
+        >
+          <div
+            v-for="(post, index) in posts"
+            :key="index"
+            class="bg-white rounded-lg shadow-sm mb-4 p-4"
+          >
+            <div class="flex items-start">
+              <img
+                :src="post.avatar"
+                alt="Avatar"
+                class="w-10 h-10 rounded-full mr-3"
+                loading="lazy"
+              />
+              <div class="flex-1">
+                <div class="font-semibold text-sm">{{ post.author }}</div>
+                <div class="text-xs text-gray-500 mt-1">{{ post.time }}</div>
+                <div class="mt-2 text-gray-700 text-sm">{{ post.content }}</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <!-- 加载更多提示 -->
-      <div v-if="loading" class="text-center text-gray-500 py-4">加载中...</div>
+        </van-list>
+      </van-pull-refresh>
     </section>
 
     <!-- 底部基础导航 -->
@@ -79,6 +88,7 @@
     </footer>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref } from 'vue'
@@ -122,6 +132,11 @@ const posts = ref([
 
 // 加载状态
 const loading = ref(false)
+const finished = ref(false)
+const refreshing = ref(false)
+// 未读消息数量
+const unreadCount = ref(5)
+
 
 // 处理核心功能入口点击事件
 const handleFeatureClick = (path: string) => {
@@ -133,17 +148,18 @@ const handleNavClick = (path: string) => {
   router.push(path)
 }
 
+// 跳转到消息页面
+const goToMessages = () => {
+  console.log('跳转到消息页面')
+  router.push('/messages')
+}
+
 // 模拟下拉刷新
 const onRefresh = () => {
-  loading.value = true
+  refreshing.value = true
   setTimeout(() => {
-    posts.value.unshift({
-      author: '新用户',
-      avatar: 'https://example.com/new-avatar.jpg',
-      time: '刚刚',
-      content: '最新动态内容...'
-    })
-    loading.value = false
+    posts.value.unshift({ author: '新用户', avatar: '', time: '刚刚', content: '最新动态内容...' })
+    refreshing.value = false
   }, 1000)
 }
 
@@ -151,24 +167,18 @@ const onRefresh = () => {
 const onLoadMore = () => {
   loading.value = true
   setTimeout(() => {
-    posts.value.push({
-      author: '更多用户',
-      avatar: 'https://example.com/more-avatar.jpg',
-      time: '稍早',
-      content: '更多动态内容...'
-    })
+    const newPosts = Array.from({ length: 5 }, (_, i) => ({
+      author: `用户${posts.value.length + i + 1}`,
+      avatar: '',
+      time: `${Math.floor(Math.random() * 10)}小时前`,
+      content: `这是第${posts.value.length + i + 1}条动态...`
+    }))
+    posts.value.push(...newPosts)
+    if (posts.value.length >= 20) finished.value = true
     loading.value = false
   }, 1000)
 }
 
-
-// 未读消息数量
-const unreadCount = ref(5)
-
-// 跳转到消息页面
-const goToMessages = () => {
-  router.push('/messages')
-}
 </script>
 
 <style scoped>

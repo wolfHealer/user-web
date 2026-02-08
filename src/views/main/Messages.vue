@@ -29,7 +29,7 @@
           </div>
           <van-tag
             :type="getMessageTagType(message.type)"
-            size="small"
+            :size="tagSize"
           >
             {{ getMessageTypeName(message.type) }}
           </van-tag>
@@ -131,6 +131,13 @@ const readMessage = (message: any) => {
   message.isRead = true
   router.push(message.link)
 }
+
+
+// 定义 tag 尺寸类型
+type TagSize = 'large' | 'medium' | 'small';
+
+// 使用 ref 定义尺寸变量
+const tagSize = ref<TagSize>('small');
 </script>
 
 <style scoped>
