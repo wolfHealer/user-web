@@ -1,248 +1,229 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- 顶部筛选栏 -->
-    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full">
-      <div class="flex justify-between items-center">
-        <van-dropdown-menu>
-          <van-dropdown-item v-model="currentPartition" :options="partitions" @change="filterByPartition" />
-          <van-dropdown-item v-model="sortType" :options="sortOptions" @change="sortByType" />
-        </van-dropdown-menu>
+    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full flex justify-between items-center">
+      <div class="flex gap-2">
+        <!-- 疾病筛选按钮 -->
+        <van-button size="small" plain @click="showCategory = true">
+          {{ diseaseLabel }} <van-icon name="arrow-down" />
+        </van-button>
+
+        <!-- 类型筛选按钮 -->
+        <van-button size="small" plain @click="showType = true">
+          {{ typeLabel }} <van-icon name="arrow-down" />
+        </van-button>
+
+        <!-- 排序筛选按钮 -->
+        <van-button size="small" plain @click="showSort = true">
+          {{ sortLabel }} <van-icon name="arrow-down" />
+        </van-button>
+
+        <!-- 重置按钮 -->
+        <van-button size="small" plain @click="resetFilters">
+          重置
+        </van-button>
       </div>
     </header>
 
     <!-- 动态列表 -->
     <section class="flex-1 overflow-y-auto p-4">
-      <div
-        v-for="(post, index) in posts"
-        :key="index"
-        class="bg-white rounded-lg shadow-sm mb-4 p-4"
-      >
-        <!-- 用户信息 -->
-        <div class="flex items-center mb-3">
-          <img
-            :src="post.avatar || defaultAvatar"
-            alt="头像"
-            class="w-10 h-10 rounded-full mr-3"
-          />
-          <div>
-            <div class="font-semibold text-sm">{{ post.nickname }}</div>
-            <div class="text-xs text-gray-500">{{ post.time }}</div>
-          </div>
-        </div>
-
-        <!-- 动态内容 -->
-        <div class="text-gray-700 text-sm mb-3">{{ post.content }}</div>
-
-        <!-- 图片展示 -->
-        <div v-if="post.images.length > 0" class="grid grid-cols-3 gap-2 mb-3">
-          <img
-            v-for="(img, idx) in post.images"
-            :key="idx"
-            :src="img"
-            alt="图片"
-            class="rounded cursor-pointer"
-            @click="previewImage(img)"
-          />
-        </div>
-
-        <!-- 互动按钮 -->
-        <div class="flex justify-between items-center text-gray-500 text-sm">
-          <div class="flex space-x-4">
-            <div
-              class="flex items-center cursor-pointer"
-              :class="{ 'text-red-500': post.isLiked }"
-              @click="toggleLike(post)"
-            >
-              <van-icon name="like" size="16" />
-              <span class="ml-1">{{ post.likeCount }}</span>
-            </div>
-            <div class="flex items-center cursor-pointer" @click="toggleComment(post)">
-              <van-icon name="chat" size="16" />
-              <span class="ml-1">{{ post.commentCount }}</span>
-            </div>
-          </div>
-          <van-icon name="warning" size="16" @click="reportPost(post)" />
-        </div>
-
-        <!-- 评论区 -->
-        <div v-if="post.showComments" class="mt-3 border-t pt-3">
-          <div
-            v-for="(comment, idx) in post.comments"
-            :key="idx"
-            class="flex items-start mb-2"
-          >
-            <img
-              :src="comment.avatar || defaultAvatar"
-              alt="头像"
-              class="w-8 h-8 rounded-full mr-2"
-            />
-            <div>
-              <div class="text-xs font-semibold">{{ comment.nickname }}</div>
-              <div class="text-xs text-gray-600">{{ comment.content }}</div>
-            </div>
-          </div>
-          <div class="flex items-center mt-2">
-            <input
-              v-model="post.newComment"
-              type="text"
-              placeholder="输入评论..."
-              class="flex-1 border rounded-l px-2 py-1 text-sm"
-              @keyup.enter="addComment(post)"
-            />
-            <button
-              class="bg-blue-500 text-white px-3 py-1 rounded-r text-sm"
-              @click="addComment(post)"
-            >
-              发送
-            </button>
-          </div>
-        </div>
-      </div>
+      <PostList
+        :category-id="categoryId"
+        :disease-id="diseaseId"
+        :type="type"
+        :sort="sort"
+        @comment="handleComment"
+      />
     </section>
 
-    <!-- 发布按钮 -->
-    <footer class="fixed bottom-4 right-4">
-      <van-button
-        type="primary"
-        round
-        icon="edit"
-        size="large"
-        @click="showPublishModal = true"
+    <!-- 分类选择弹窗（第一级） -->
+    <van-popup v-model:show="showCategory" position="bottom">
+      <van-picker
+        :columns="categoryOptions"
+        @confirm="onCategoryConfirm"
+        @cancel="showCategory = false"
       />
-    </footer>
-
-    <!-- 发布弹窗 -->
-    <van-popup v-model:show="showPublishModal" position="bottom" :style="{ height: '40%' }">
-      <div class="p-4">
-        <textarea
-          v-model="newPostContent"
-          placeholder="分享你的故事..."
-          class="w-full h-32 border rounded p-2 text-sm"
-        ></textarea>
-        <div class="flex justify-between mt-4">
-          <van-button @click="showPublishModal = false">取消</van-button>
-          <van-button type="primary" @click="publishPost">发布</van-button>
-        </div>
-      </div>
     </van-popup>
+
+    <!-- 疾病选择弹窗（第二级） -->
+    <van-popup v-model:show="showDisease" position="bottom">
+      <van-picker
+        :columns="diseaseOptions"
+        @confirm="onDiseaseConfirm"
+        @cancel="showDisease = false"
+      />
+    </van-popup>
+
+    <!-- 类型选择弹窗 -->
+    <van-popup v-model:show="showType" position="bottom">
+      <van-picker
+        :columns="typeOptions"
+        @confirm="onTypeConfirm"
+        @cancel="showType = false"
+      />
+    </van-popup>
+
+    <!-- 排序选择弹窗 -->
+    <van-popup v-model:show="showSort" position="bottom">
+      <van-picker
+        :columns="sortOptions"
+        @confirm="onSortConfirm"
+        @cancel="showSort = false"
+      />
+    </van-popup>
+
+    <!-- 底部导航栏 -->
+    <BottomNav />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import PostList from './components/PostList.vue'
+import request from '@/utils/request.ts'
+import BottomNav from '@/components/BottomNav.vue' // 引入底部导航组件
 
-// 默认头像
-const defaultAvatar = 'https://example.com/default-avatar.png'
+// 弹窗控制
+const showCategory = ref(false)
+const showDisease = ref(false)
+const showType = ref(false)
+const showSort = ref(false)
 
-// 分区选项
-const partitions = ref([
-  { text: '全部动态', value: 'all' },
-  { text: '渐冻症交流区', value: 'als' },
-  { text: 'SMA交流区', value: 'sma' },
-  { text: '家属互助', value: 'family' },
-  { text: '心理疏导', value: 'psychology' }
-])
+// 筛选条件
+const categoryId = ref<number | null>(null)
+const diseaseId = ref<number | null>(null)
+const type = ref<string>('all')
+const sort = ref<string>('latest')
 
-// 排序选项
-const sortOptions = ref([
+// 分类选项（从后端获取）
+const categoryOptions = ref<{ text: string; value: number; children: { text: string; value: number }[] }[]>([])
+
+// 疾病选项（动态加载）
+const diseaseOptions = ref<{ text: string; value: number }[]>([])
+
+// 类型和排序选项
+const typeOptions = [
+  { text: '全部类型', value: 'all' },
+  { text: '求助', value: 'help' },
+  { text: '经验', value: 'experience' },
+  { text: '情绪', value: 'emotion' }
+]
+
+const sortOptions = [
   { text: '最新', value: 'latest' },
-  { text: '最热', value: 'hot' }
-])
+  { text: '热门', value: 'hot' }
+]
 
-// 当前分区和排序
-const currentPartition = ref('all')
-const sortType = ref('latest')
-
-// 动态数据
-const posts = ref([
-  {
-    id: 1,
-    nickname: '用户A',
-    avatar: '',
-    time: '2小时前',
-    content: '今天去医院复查，医生说恢复得不错！',
-    images: [],
-    likeCount: 12,
-    commentCount: 5,
-    isLiked: false,
-    showComments: false,
-    comments: [],
-    newComment: ''
+// 计算显示标签
+const diseaseLabel = computed(() => {
+  const category = categoryOptions.value.find(c => c.value === categoryId.value)
+  const disease = diseaseOptions.value.find(d => d.value === diseaseId.value)
+  if (category && disease) {
+    return `${category.text} - ${disease.text}`
   }
-])
+  return '请选择疾病'
+})
 
-// 发布弹窗状态
-const showPublishModal = ref(false)
-const newPostContent = ref('')
+const typeLabel = computed(() => {
+  const found = typeOptions.find(t => t.value === type.value)
+  return found ? found.text : '全部类型'
+})
 
-// 筛选分区
-const filterByPartition = () => {
-  console.log('筛选分区:', currentPartition.value)
-}
+const sortLabel = computed(() => {
+  const found = sortOptions.find(s => s.value === sort.value)
+  return found ? found.text : '最新'
+})
 
-// 排序
-const sortByType = () => {
-  console.log('排序方式:', sortType.value)
-}
+// 获取分类及疾病数据
+const fetchCategoryOptions = async () => {
+  try {
+    const res = await request.get('/api/knowledge/disease-tree')
+    const categories = res.data.data || []
 
-// 点赞/取消点赞
-const toggleLike = (post: any) => {
-  post.isLiked = !post.isLiked
-  post.likeCount += post.isLiked ? 1 : -1
-}
-
-// 展开/收起评论
-const toggleComment = (post: any) => {
-  post.showComments = !post.showComments
-}
-
-// 添加评论
-const addComment = (post: any) => {
-  if (post.newComment.trim()) {
-    post.comments.push({
-      nickname: '我',
-      avatar: defaultAvatar,
-      content: post.newComment
-    })
-    post.commentCount++
-    post.newComment = ''
+    return categories.map((category: any) => ({
+      text: category.name,
+      value: category.id,
+      children: category.children.map((disease: any) => ({
+        text: disease.name,
+        value: disease.id
+      }))
+    }))
+  } catch (error) {
+    console.error('获取分类数据失败:', error)
+    return []
   }
 }
 
-// 发布动态
-const publishPost = () => {
-  if (newPostContent.value.trim()) {
-    posts.value.unshift({
-      id: Date.now(),
-      nickname: '我',
-      avatar: defaultAvatar,
-      time: '刚刚',
-      content: newPostContent.value,
-      images: [],
-      likeCount: 0,
-      commentCount: 0,
-      isLiked: false,
-      showComments: false,
-      comments: [],
-      newComment: ''
-    })
-    newPostContent.value = ''
-    showPublishModal.value = false
+// 确认分类（第一级）
+const onCategoryConfirm = ({ selectedOptions }: any) => {
+  categoryId.value = selectedOptions[0].value
+  diseaseId.value = null
+
+  // 动态生成疾病选项，插入“全部疾病”
+  const children = selectedOptions[0].children || []
+  diseaseOptions.value = [
+    { text: '全部疾病', value: null }, // 插入“全部疾病”选项
+    ...children.map((disease: any) => ({
+      text: disease.text,
+      value: disease.value
+    }))
+  ]
+
+  showCategory.value = false
+  showDisease.value = true
+}
+
+// 确认疾病（第二级）
+const onDiseaseConfirm = ({ selectedOptions }: any) => {
+  diseaseId.value = selectedOptions[0].value === null ? null : selectedOptions[0].value
+  showDisease.value = false
+}
+
+// 确认类型
+const onTypeConfirm = ({ selectedOptions }: any) => {
+  type.value = selectedOptions[0].value
+  showType.value = false
+}
+
+// 确认排序
+const onSortConfirm = ({ selectedOptions }: any) => {
+  sort.value = selectedOptions[0].value
+  showSort.value = false
+}
+
+// 重置筛选条件
+const resetFilters = () => {
+  categoryId.value = null
+  diseaseId.value = null
+  type.value = 'all'
+  sort.value = 'latest'
+  diseaseOptions.value = []
+}
+
+// 监听分类变化，清空疾病选择
+watch(categoryId, () => {
+  diseaseId.value = null
+})
+
+// 组件挂载时获取分类数据
+onMounted(async () => {
+  categoryOptions.value = await fetchCategoryOptions()
+})
+
+// 处理评论事件
+const handleComment = (data: { post: any; newComment?: any; comments?: any[] }) => {
+  if (data.newComment) {
+    console.log('新增评论:', data.newComment)
+    alert(`新评论：${data.newComment.content}`)
+  } else if (data.comments) {
+    console.log('评论列表:', data.comments)
+    alert(`共 ${data.comments.length} 条评论`)
   }
-}
-
-// 举报动态
-const reportPost = (post: any) => {
-  alert(`举报动态 ID: ${post.id}`)
-}
-
-// 预览图片
-const previewImage = (url: string) => {
-  window.open(url, '_blank')
 }
 </script>
 
 <style scoped>
+/* 统一 Tailwind 样式 */
 .text-sm {
   font-size: 16px;
 }
@@ -251,5 +232,8 @@ const previewImage = (url: string) => {
 }
 .shadow-sm {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.hover\:bg-blue-50:hover {
+  background-color: #e0f2fe;
 }
 </style>

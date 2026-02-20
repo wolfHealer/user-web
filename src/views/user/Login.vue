@@ -57,8 +57,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
+import request from '@/utils/request.ts'
+import { useUserStore } from '@/stores/modules/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 // 登录表单数据
 const loginForm = ref({
@@ -78,18 +81,45 @@ const togglePasswordVisibility = () => {
 }
 
 // 处理登录
-const handleLogin = () => {
+const handleLogin = async () => {
   if (!loginForm.value.phone || !loginForm.value.password) {
     showToast('请填写完整信息')
     return
   }
+
   loading.value = true
-  // 模拟登录请求
-  setTimeout(() => {
+  try {
+    // 调用登录接口
+    const response = await request.post('/api/auth/login', {
+      phone: loginForm.value.phone,
+      password_hash: loginForm.value.password
+    })
+
+    const { code, message, data } = response.data
+
+    if (code === 200) {
+      // 存储 Token 和用户信息到 Pinia Store
+      userStore.setUserInfo({
+        token: data.token,
+        userInfo: {
+          user_id: data.user_id,
+          nickname: data.nickname,
+          phone: data.phone,
+          avatar: data.avatar
+        }
+      })
+
+      showToast('登录成功')
+      router.push('/home') // 跳转到首页
+    } else {
+      showToast(message || '登录失败')
+    }
+  } catch (error) {
+    console.error('登录请求失败:', error)
+    showToast('网络异常，请稍后重试')
+  } finally {
     loading.value = false
-    showToast('登录成功')
-    router.push('/home')
-  }, 1000)
+  }
 }
 
 // 跳转到注册页面

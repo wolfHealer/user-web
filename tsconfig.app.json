@@ -1,22 +1,44 @@
+// {
+//   "extends": "@vue/tsconfig/tsconfig.dom.json",
+//   "compilerOptions": {
+//     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+//     "types": ["vite/client"],
+
+//     /* Linting */
+//     "strict": true,
+//     "noUnusedLocals": true,
+//     "noUnusedParameters": true,
+//     "erasableSyntaxOnly": true,
+//     "noFallthroughCasesInSwitch": true,
+//     "noUncheckedSideEffectImports": true,
+//     "verbatimModuleSyntax": true // 如果存在此配置，则需遵守规则
+
+//   },
+//    "baseUrl": ".",
+//     "paths": {
+//       "@/*": ["src/*"]
+//     },
+//   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+// }
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vite/client"],
 
+    /* 路径映射 */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "verbatimModuleSyntax": true // 如果存在此配置，则需遵守规则
-
+    "verbatimModuleSyntax": true
   },
-   "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

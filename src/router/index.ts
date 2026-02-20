@@ -20,6 +20,10 @@ const routes = [
 
   // 病种详情页（新增）
   { path: '/disease/:id', component: () => import('../views/knowledge/DiseaseDetail.vue') },
+  {
+    path: '/category/:id', // 新增路由规则
+    component: () => import('../views/knowledge/CategoryDetail.vue'), // 新增组件
+  },
 
   // 新增：资源分类详情页
   {
@@ -32,7 +36,18 @@ const routes = [
   { path: '/profile', component: () => import('../views/user/Profile.vue') },
 
   // 404 页面（可选）
-  { path: '/:catchAll(.*)', redirect: '/home' }
+  { path: '/:catchAll(.*)', redirect: '/home' },
+
+  // 用户相关页面
+  { path: '/favorites', component: () => import('../views/user/Favorites.vue') },
+  { path: '/my-posts', component: () => import('../views/user/MyPosts.vue') },
+  { path: '/my-questions', component: () => import('../views/user/MyQuestions.vue') },
+  { path: '/profile/edit', component: () => import('../views/user/ProfileEdit.vue') },
+
+
+  //资源下载
+    { path: '/resource/medical', component: () => import('../views/user/Favorites.vue') },
+
 ]
 
 const router = createRouter({

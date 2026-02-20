@@ -1,6 +1,6 @@
-<template>
+<!-- <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- 分区导航 -->
+    分区导航
     <section class="p-4">
       <h2 class="text-lg font-bold mb-4">资源对接</h2>
       <div class="grid grid-cols-2 gap-4">
@@ -17,7 +17,7 @@
       </div>
     </section>
 
-    <!-- 资源列表 -->
+    资源列表
     <section class="p-4">
       <div
         v-for="(resource, index) in resources"
@@ -118,4 +118,54 @@ const feedbackResource = (resource: any) => {
 .shadow-sm {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-</style>
+</style> -->
+
+
+<template>
+  <div class="min-h-screen bg-gray-50">
+    <!-- 顶部 -->
+    <div class="bg-white p-4 shadow-sm">
+      <h1 class="text-lg font-bold">资源中心</h1>
+      <p class="text-xs text-gray-500 mt-1">
+        官方指南 · 救助政策 · 用药渠道 · 康复支持
+      </p>
+    </div>
+
+    <!-- 四大入口 -->
+    <div class="grid grid-cols-2 gap-3 p-4">
+      <ResourceCard title="医疗资源" icon="medal" @click="go('/resource/medical')" />
+      <ResourceCard title="公益救助" icon="gift" @click="go('/resource/charity')" />
+      <ResourceCard title="用药渠道" icon="coupon" @click="go('/resource/drug')" />
+      <ResourceCard title="康复支持" icon="friends" @click="go('/resource/rehab')" />
+    </div>
+
+    <!-- 推荐资源 -->
+    <div class="px-4 pb-6">
+      <div class="font-semibold mb-2">推荐资源</div>
+      <van-cell-group>
+        <van-cell
+          v-for="item in recommends"
+          :key="item.id"
+          :title="item.title"
+          is-link
+          @click="open(item)"
+        />
+      </van-cell-group>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+import ResourceCard from './components/ResourceCard.vue'
+
+const router = useRouter()
+
+const recommends = [
+  { id: 1, title: '罕见病诊疗指南合集' },
+  { id: 2, title: '医保报销流程图解' }
+]
+
+const go = (path: string) => router.push(path)
+const open = (item: any) => console.log(item)
+</script>
