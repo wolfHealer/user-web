@@ -20,13 +20,20 @@ npm run dev
 │   ├── MedicalTemplate.vue  # 病历模板
 │
 ├── charity/
-│   ├── AidProjectList.vue # 公益项目
-│   ├── PolicyList.vue #   政策支持
+│   ├── AidProjectList.vue # 救助项目库
+│   ├── PolicyList.vue #   医保政策解读
+│   ├── CaseShare.vue # 救助案例分享
+│   ├── HelpChannel.vue # 求助通道指引
 │
 ├── drug/
 │   ├── DrugList.vue # 药物信息
 │   ├── ChannelList.vue  # 获取渠道
+│   ├── DonationProject.vue # 药品赠药/援助项目
+│   ├── MedicationTool.vue # 用药管理工具
 │
 ├── rehab/
-│   ├── RehabGuide.vue # 康复指南
-│   ├── NursingGuide.vue # 护理指南
+│   ├── RehabGuide.vue # 康复训练指南
+│   ├── HomeCareManual.vue # 居家护理手册
+│   ├── PsychologicalSupport.vue # 心理支持资源
+    ├── RehabResourceList.vue # 康复资源对接 
+    ├── LifeTemplates.vue # 生活实用模板

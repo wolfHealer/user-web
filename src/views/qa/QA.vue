@@ -1,6 +1,6 @@
-<template>
+<!-- <template>
   <div class="min-h-screen bg-gray-50">
-    <!-- 顶部搜索栏 -->
+    顶部搜索栏>
     <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full flex items-center">
       <van-search
         v-model="searchKeyword"
@@ -19,7 +19,7 @@
       </van-button>
     </header>
 
-    <!-- 专家列表 -->
+    <专家列表
     <section class="p-4">
       <h2 class="text-lg font-bold mb-4">专家列表</h2>
       <div
@@ -43,7 +43,7 @@
       </div>
     </section>
 
-    <!-- 热门问题 -->
+    热门问题
     <section class="p-4">
       <h2 class="text-lg font-bold mb-4">热门问题</h2>
       <div
@@ -136,5 +136,61 @@ const goToExpertDetail = (expertId: number) => {
 }
 .shadow-sm {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+</style> -->
+
+
+<template>
+  <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <!-- 提示图标 -->
+    <van-icon name="info-o" size="48" color="#1E90FF" class="mb-4" />
+
+    <!-- 提示文字 -->
+    <div class="text-center">
+      <h1 class="text-xl font-bold text-gray-800 mb-2">功能正在开发中</h1>
+      <p class="text-gray-600 mb-6">
+        专家答疑模块暂未上线，敬请期待！您可以先浏览其他资源或关注我们的更新通知。
+      </p>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="flex gap-4">
+      <van-button type="primary" @click="goToResources">查看资源中心</van-button>
+      <van-button plain @click="goBack">返回上一页</van-button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 跳转到资源中心
+const goToResources = () => {
+  router.push('/resource')
+}
+
+// 返回上一页
+const goBack = () => {
+  router.back()
+}
+</script>
+
+<style scoped>
+.min-h-screen {
+  background-color: #f9fafb; /* 浅灰色背景 */
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-600 {
+  color: #4b5563;
 }
 </style>

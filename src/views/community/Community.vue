@@ -1,7 +1,17 @@
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- 顶部筛选栏 -->
-    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full flex justify-between items-center">
+    <!-- 顶部操作栏 -->
+    <header class="sticky top-0 z-10 bg-white shadow-sm p-4 w-full flex items-center justify-between">
+      <!-- 返回按钮 -->
+      <van-icon
+        name="arrow-left"
+        size="24"
+        color="#000000"
+        class="cursor-pointer"
+        @click="goBack"
+      />
+
+      <!-- 筛选按钮区域 -->
       <div class="flex gap-2">
         <!-- 疾病筛选按钮 -->
         <van-button size="small" plain @click="showCategory = true">
@@ -79,9 +89,14 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import PostList from './components/PostList.vue'
 import request from '@/utils/request.ts'
-import BottomNav from '@/components/BottomNav.vue' // 引入底部导航组件
+import BottomNav from '@/components/BottomNav.vue'
+import { useUserStore } from '@/stores/modules/user'
+
+const router = useRouter()
+const userStore = useUserStore()
 
 // 弹窗控制
 const showCategory = ref(false)
@@ -162,7 +177,7 @@ const onCategoryConfirm = ({ selectedOptions }: any) => {
   // 动态生成疾病选项，插入“全部疾病”
   const children = selectedOptions[0].children || []
   diseaseOptions.value = [
-    { text: '全部疾病', value: null }, // 插入“全部疾病”选项
+    { text: '全部疾病', value: null },
     ...children.map((disease: any) => ({
       text: disease.text,
       value: disease.value
@@ -210,30 +225,65 @@ onMounted(async () => {
   categoryOptions.value = await fetchCategoryOptions()
 })
 
-// 处理评论事件
-const handleComment = (data: { post: any; newComment?: any; comments?: any[] }) => {
+// 返回上一级页面
+const goBack = () => {
+  router.back()
+}
+
+const handleComment = async (data: { post: any; newComment?: any; comments?: any[] }) => {
+  console.log('handleComment 被调用:', data)
+
   if (data.newComment) {
-    console.log('新增评论:', data.newComment)
-    alert(`新评论：${data.newComment.content}`)
-  } else if (data.comments) {
-    console.log('评论列表:', data.comments)
-    alert(`共 ${data.comments.length} 条评论`)
+    const userId = userStore.userInfo?.user_id
+    if (!userId) {
+      alert('用户未登录，请先登录！')
+      return
+    }
+
+    try {
+      const res = await request.post(`/api/community/posts/${data.post.id}/comments`, {
+        content: data.newComment.content,
+        user_id: userId,
+        target_type: 'post'
+      })
+
+      console.log('评论创建成功:', res.data)
+      alert(`新评论：${data.newComment.content}`)
+    } catch (error) {
+      console.error('评论创建失败:', error)
+      alert('评论提交失败，请稍后再试！')
+    }
   }
 }
 </script>
 
 <style scoped>
-/* 统一 Tailwind 样式 */
+.min-h-screen {
+  background-color: #f9fafb; /* 浅灰色背景 */
+}
+
+.sticky.top-0 {
+  background-color: #ffffff; /* 白色顶部栏 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
 .text-sm {
   font-size: 16px;
 }
+
 .rounded-lg {
   border-radius: 10px;
 }
+
 .shadow-sm {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+
 .hover\:bg-blue-50:hover {
   background-color: #e0f2fe;
+}
+
+.cursor-pointer:hover {
+  opacity: 0.8;
 }
 </style>

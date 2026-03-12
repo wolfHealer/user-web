@@ -9,32 +9,26 @@
         class="cursor-pointer mr-4"
         @click="goBack"
       />
-      <h1 class="text-lg font-bold">资源中心</h1>
+      <h1 class="text-lg font-bold">公益救助中心</h1>
     </header>
 
     <!-- 内容区域 -->
     <main class="flex-1 overflow-y-auto">
-      <!-- 四大入口 -->
-      <div class="grid grid-cols-2 gap-3 p-4">
-        <ResourceCard title="医疗资源服务" icon="medal" @click="go('/resource/medical')" />
-        <ResourceCard title="公益救助中心" icon="gift" @click="go('/resource/charity')" />
-        <ResourceCard title="用药信息平台" icon="coupon" @click="go('/resource/drug')" />
-        <ResourceCard title="康复支持专区" icon="friends" @click="go('/resource/rehab')" />
-      </div>
-
-      <!-- 推荐资源 -->
-      <div class="px-4 pb-6">
-        <div class="font-semibold mb-2">推荐资源</div>
-        <van-cell-group>
-          <van-cell
-            v-for="item in recommends"
-            :key="item.id"
-            :title="item.title"
-            is-link
-            @click="open(item)"
-          />
-        </van-cell-group>
-      </div>
+      <!-- 功能模块 -->
+      <van-tabs v-model:active="activeTab" sticky>
+        <van-tab title="救助项目库">
+          <AidProjectList />
+        </van-tab>
+        <van-tab title="医保政策解读">
+          <PolicyList />
+        </van-tab>
+        <van-tab title="救助案例分享">
+          <CaseShare />
+        </van-tab>
+        <van-tab title="求助通道指引">
+          <HelpChannel />
+        </van-tab>
+      </van-tabs>
     </main>
 
     <!-- 底部导航栏 -->
@@ -43,19 +37,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import ResourceCard from './components/ResourceCard.vue'
+import AidProjectList from '../charity/AidProjectList.vue'
+import PolicyList from '../charity/PolicyList.vue'
+import CaseShare from '../charity/CaseShare.vue'
+import HelpChannel from '../charity/HelpChannel.vue'
 import BottomNav from '@/components/BottomNav.vue' // 引入底部导航组件
 
 const router = useRouter()
-
-const recommends = [
-  { id: 1, title: '罕见病诊疗指南合集' },
-  { id: 2, title: '医保报销流程图解' }
-]
-
-const go = (path: string) => router.push(path)
-const open = (item: any) => console.log(item)
+const activeTab = ref(0)
 
 // 返回上一级页面
 const goBack = () => {

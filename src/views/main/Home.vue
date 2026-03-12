@@ -111,7 +111,8 @@ const coreFeatures = ref([
 // 底部导航数据
 const bottomNavs = ref([
   { title: '首页', icon: 'home-o', path: '/' },
-  { title: '我的', icon: 'user-o', path: '/profile' }
+  { title: '打赏', icon: 'gold-coin-o', path: '/reward' },
+  { title: '我的', icon: 'user-o', path: '/profile' },
 ])
 
 // 动态内容模拟数据

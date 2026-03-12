@@ -1,8 +1,8 @@
-<template>
+<!-- <template>
   <div class="min-h-screen bg-gray-50 p-4">
     <h1 class="text-xl font-bold mb-6">提问</h1>
 
-    <!-- 病种选择 -->
+    病种选择 
     <van-field
       v-model="selectedDisease"
       label="关联病种"
@@ -18,7 +18,7 @@
       />
     </van-popup>
 
-    <!-- 问题标题 -->
+    问题标题
     <van-field
       v-model="questionTitle"
       label="问题标题"
@@ -26,7 +26,7 @@
       class="mt-4"
     />
 
-    <!-- 问题描述 -->
+    问题描述 
     <van-field
       v-model="questionContent"
       label="问题描述"
@@ -36,13 +36,13 @@
       class="mt-4"
     />
 
-    <!-- 图片上传 -->
+     图片上传
     <div class="mt-4">
       <div class="text-sm mb-2">上传图片（如检查报告）</div>
       <van-uploader v-model="imageList" multiple />
     </div>
 
-    <!-- 提交按钮 -->
+    提交按钮
     <van-button
       type="primary"
       block
@@ -102,5 +102,61 @@ const submitQuestion = () => {
 <style scoped>
 .text-sm {
   font-size: 16px;
+}
+</style> -->
+
+
+<template>
+  <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <!-- 提示图标 -->
+    <van-icon name="info-o" size="48" color="#1E90FF" class="mb-4" />
+
+    <!-- 提示文字 -->
+    <div class="text-center">
+      <h1 class="text-xl font-bold text-gray-800 mb-2">功能正在开发中</h1>
+      <p class="text-gray-600 mb-6">
+        专家答疑模块暂未上线，敬请期待！您可以先浏览其他资源或关注我们的更新通知。
+      </p>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="flex gap-4">
+      <van-button type="primary" @click="goToResources">查看资源中心</van-button>
+      <van-button plain @click="goBack">返回上一页</van-button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 跳转到资源中心
+const goToResources = () => {
+  router.push('/resource')
+}
+
+// 返回上一页
+const goBack = () => {
+  router.back()
+}
+</script>
+
+<style scoped>
+.min-h-screen {
+  background-color: #f9fafb; /* 浅灰色背景 */
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-600 {
+  color: #4b5563;
 }
 </style>

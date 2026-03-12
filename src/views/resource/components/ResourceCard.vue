@@ -4,7 +4,7 @@
     @click="$emit('click')"
   >
     <van-icon :name="icon" size="26" class="text-blue-500 mb-2" />
-    <div class="text-sm font-medium">{{ title }}</div>
+    <div class="text-base font-medium text-blue-500">{{ title }}</div>
   </div>
 </template>
 

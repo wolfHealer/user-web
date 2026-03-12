@@ -89,7 +89,6 @@ const handleLogin = async () => {
 
   loading.value = true
   try {
-    // 调用登录接口
     const response = await request.post('/api/auth/login', {
       phone: loginForm.value.phone,
       password_hash: loginForm.value.password
@@ -98,11 +97,10 @@ const handleLogin = async () => {
     const { code, message, data } = response.data
 
     if (code === 200) {
-      // 存储 Token 和用户信息到 Pinia Store
       userStore.setUserInfo({
         token: data.token,
         userInfo: {
-          user_id: data.user_id,
+          user_id: data.user_id, // 确保字段名一致
           nickname: data.nickname,
           phone: data.phone,
           avatar: data.avatar
@@ -110,7 +108,7 @@ const handleLogin = async () => {
       })
 
       showToast('登录成功')
-      router.push('/home') // 跳转到首页
+      router.push('/home')
     } else {
       showToast(message || '登录失败')
     }
