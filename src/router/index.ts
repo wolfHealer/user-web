@@ -1,4 +1,3 @@
-// src/router/index.ts
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -57,22 +56,33 @@ const routes = [
   //资源下载
     { path: '/resource/medical', component: () => import('../views/resource/medical/MedicalResource.vue') },
     { path: '/resource/medical/guides/:id', component: () => import('../views/resource/medical/GuideDetail.vue') },
-    { path: '/resource/medical/inspection/:id',component: () => import('@/views/resource/medical/InspectionDetail.vue')},
-    { path: '/resource/medical/directory',component: () => import('@/views/resource/medical/DoctorDirectory.vue')},
-    { path: '/resource/medical/directory/doctor/:id', component: () => import('@/views/resource/medical/DoctorDetail.vue')},
-    { path: '/resource/medical/directory/hospital/:id', component: () => import('@/views/resource/medical/HospitalDetail.vue')},
+    { path: '/resource/medical/inspection/:id',component: () => import('../views/resource/medical/InspectionDetail.vue')},
+    { path: '/resource/medical/directory',component: () => import('../views/resource/medical/DoctorDirectory.vue')},
+    { path: '/resource/medical/directory/doctor/:id', component: () => import('../views/resource/medical/DoctorDetail.vue')},
+    { path: '/resource/medical/directory/hospital/:id', component: () => import('../views/resource/medical/HospitalDetail.vue')},
     
     { path: '/resource/charity', component: () => import('../views/resource/charity/CharityResource.vue') },
+    { path: '/resource/charity/detail/:id', component: () => import('../views/resource/charity/AidProjectDetail.vue')},
+    { path: '/resource/charity/policies', component: () => import('../views/resource/charity/PolicyList.vue')},
+    { path: '/resource/charity/policies/detail/:id',  component: () => import('../views/resource/charity/PolicyDetail.vue')},
+    { path: '/resource/charity/channels', component: () => import('../views/resource/charity/HelpChannel.vue')},,//求助通道指引'
+    { path: '/resource/charity/channels/detail/:id', component: () => import('../views/resource/charity/HelpChannelDetail.vue')},//渠道详情
+    { path: '/resource/charity/cases', component: () => import('../views/resource/charity/CaseShare.vue')},//救助案例分享'
+    { path: '/resource/charity/cases/detail/:id', component: () => import('../views/resource/charity/CaseShareDetail.vue')},//案例详情
 
 
     { path: '/resource/drug', component: () => import('../views/resource/drug/DrugResource.vue') },
     { path: '/resource/drug/detail/:id',component: () => import('../views/resource/drug/DrugDetail.vue')},//药品详情页
     { path: '/resource/drug/donation/apply',  component: () => import('../views/resource/drug/DonationApply.vue')},
+    { path: '/resource/drug/channel/detail/:id', component: () => import('../views/resource/drug/ChannelDetail.vue')},
 
     
     { path: '/resource/rehab', component: () => import('../views/resource/rehab/RehabResource.vue') },
-    { path: '/resource/drug/channel/detail/:id', component: () => import('../views/resource/drug/ChannelDetail.vue')}
-
+    { path: '/resource/rehab/detail/:id',component: () => import('../views/resource/rehab/RehabGuideDetail.vue')},
+    { path: '/resource/rehab/institutions/detail/:id', component: () => import('../views/resource/rehab/InstitutionDetail.vue')},//机构详情
+    { path: '/resource/rehab/devices/detail/:id', component: () => import('../views/resource/rehab/DeviceDetail.vue')},//器械详情
+    { path: '/resource/rehab/psychological', component: () => import('../views/resource/rehab/PsychologicalSupport.vue')},//心理支持资源
+    { path: '/resource/rehab/psychological/organizations/detail/:id',component: () => import('../views/resource/rehab/OrganizationDetail.vue')}//机构详情
 ]
 
 const router = createRouter({

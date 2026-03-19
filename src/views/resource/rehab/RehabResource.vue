@@ -28,9 +28,6 @@
         <van-tab title="康复资源对接">
           <RehabResourceList />
         </van-tab>
-        <van-tab title="生活实用模板">
-          <LifeTemplates />
-        </van-tab>
       </van-tabs>
     </main>
 
@@ -46,7 +43,6 @@ import RehabGuide from './RehabGuide.vue'
 import HomeCareManual from './HomeCareManual.vue'
 import PsychologicalSupport from './PsychologicalSupport.vue'
 import RehabResourceList from './RehabResourceList.vue'
-import LifeTemplates from './LifeTemplates.vue'
 import BottomNav from '@/components/BottomNav.vue' // 引入底部导航组件
 
 const router = useRouter()
